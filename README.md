@@ -12,13 +12,14 @@ Installation
 ------------
 
 ```bash
-mkdir ~/cookbooks
-cd ~/cookbooks
-git clone https://github.com/pivotal/pivotal_workstation
-git clone https://github.com/opscode-cookbooks/dmg
+cat > ~/Cheffile <<EOF
+site 'http://community.opscode.com/api/v1'
+
+cookbook 'pivotal_workstation',
+  :git => 'git://github.com/pivotal/pivotal_workstation.git'
+EOF
+
 cat > ~/soloistrc <<EOF
-cookbook_paths:
-- cookbooks
 recipes:
 - pivotal_workstation::meta_osx_base
 - pivotal_workstation::meta_osx_development
@@ -30,14 +31,29 @@ soloist
 
 Configuration
 -------------
-You may want to change the default applications or preferences.  For example, you might want to install only Chrome and Sublime Text.  In that case, your `soloistrc` would look like this:
+You may want to change the default applications or preferences.  
+
+
+For instance, you might want to install only Chrome and Sublime Text. You can change the `recipes` portion of your `soloistrc` to look like this:
 
 ```yaml
-cookbook_paths:
-- cookbooks
 recipes:
 - pivotal_workstation::chrome
 - pivotal_workstation::sublime_text
+```
+
+Alternately, you might like to change the people and company associated with your `.pairs` file. To do this simply set the appropriate `node_attributes` in your `soloistrc`:
+
+```yaml
+node_attributes:
+  git_pairs_domain: pivotallabs.com
+  git_pairs_authors:
+    - initials: ah
+      name: Abhi Hiremagalur
+      shortname: abhi
+    - initials: bc
+      name: Brian Cunnie
+      shortname: cunnie
 ```
 
 
@@ -48,9 +64,9 @@ There are two online tools you can use to generate `soloistrc` files:
 - [SoloWizard](http://www.solowizard.com)
 
 	This is the easiest way to get started, and it only involves cutting-and-pasting one line.  Many thanks to [Tom Hallett](https://github.com/tommyh).
-	
+
 - [soloistrc builder](http://soloistrc-builder.herokuapp.com)
-	
+
 	Soloistrc Builder can be pointed at any cookbook and will help you build a soloistrc. Many thanks to [Winston Teo](https://github.com/winston).
 
 
@@ -60,6 +76,14 @@ Traditionally, Pivotal Labs relied on imaging workstations from a gold master im
 
 Many recipes require [homebrew](https://github.com/mxcl/homebrew).  Other recipes will overwrite your `.bash_profile`.  `chef-solo` runs as root and may make system-wide changes.
 
+
+Finding the checksum for a dmg_package
+-----------
+
+If the filename is `ccmenu-1.5-b.dmg`
+
+    shasum -a 256 ccmenu-1.5-b.dmg
+	=> "c11302c03c90bffeafb25b36a0a77c97fc27f32f2c32845df2292416b46457aa"
 
 Contributing
 ------------
